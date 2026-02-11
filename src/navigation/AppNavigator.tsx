@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '@/features/bloodPressure/screens/HomeScreen';
 import RecordScreen from '@/features/bloodPressure/screens/RecordScreen';
 import ReminderScreen from '@/features/reminders/screens/ReminderScreen';
+import AnalysisScreen from '@/features/reports/screens/AnalysisScreen';
 import { useTheme } from 'react-native-paper';
 
 export type RootStackParamList = {
@@ -46,6 +47,11 @@ const AppNavigator = () => {
           name="Reminder" 
           component={ReminderScreen} 
           options={{ title: '提醒设置' }} 
+        />
+        <Stack.Screen 
+          name="Analysis" 
+          component={AnalysisScreen} 
+          options={{ title: '健康报告' }} 
         />
         {/* Add other screens here */}
       </Stack.Navigator>

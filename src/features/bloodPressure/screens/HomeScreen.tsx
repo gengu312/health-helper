@@ -63,6 +63,13 @@ const HomeScreen = ({ navigation }: any) => {
       {/* Quick Action FABs */}
       <View style={styles.fabContainer}>
         <FAB
+          icon="chart-box-outline"
+          style={[styles.fab, { backgroundColor: theme.colors.tertiary, marginBottom: 16 }]}
+          color={theme.colors.onTertiary}
+          onPress={() => navigation.navigate('Analysis')}
+          small
+        />
+        <FAB
           icon="alarm"
           style={[styles.fab, { backgroundColor: theme.colors.secondary, marginBottom: 16 }]}
           color={theme.colors.onSecondary}
