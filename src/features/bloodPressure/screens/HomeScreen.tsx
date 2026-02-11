@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, Button, useTheme, FAB, List } from 'react-native-paper';
+import { Text, Card, Button, useTheme, FAB, List, ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBloodPressureStore } from '../store/bloodPressureStore';
 import { format } from 'date-fns';
@@ -10,6 +10,12 @@ const HomeScreen = ({ navigation }: any) => {
   const theme = useTheme();
   const recentRecords = useBloodPressureStore(state => state.getRecentRecords());
   const allRecords = useBloodPressureStore(state => state.records);
+  const loadRecords = useBloodPressureStore(state => state.loadRecords);
+  const isLoading = useBloodPressureStore(state => state.isLoading);
+
+  useEffect(() => {
+    loadRecords();
+  }, [loadRecords]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -18,7 +24,11 @@ const HomeScreen = ({ navigation }: any) => {
         <Card style={styles.card}>
           <Card.Title title="血压趋势 (近7天)" subtitle="收缩压/舒张压" />
           <Card.Content>
-            {allRecords.length > 0 ? (
+            {isLoading ? (
+              <View style={styles.chartPlaceholder}>
+                <ActivityIndicator animating={true} color={theme.colors.primary} />
+              </View>
+            ) : allRecords.length > 0 ? (
               <BloodPressureChart data={allRecords} />
             ) : (
               <View style={styles.chartPlaceholder}>

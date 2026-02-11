@@ -29,6 +29,9 @@ importers:
       react-native:
         specifier: 0.73.0
         version: 0.73.0(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+      react-native-image-picker:
+        specifier: ^8.2.1
+        version: 8.2.1(react-native@0.73.0(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
       react-native-mlkit-ocr:
         specifier: ^0.3.0
         version: 0.3.0(react-native@0.73.0(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0)
@@ -3399,6 +3402,12 @@ packages:
 
   react-native-gesture-handler@2.30.0:
     resolution: {integrity: sha512-5YsnKHGa0X9C8lb5oCnKm0fLUPM6CRduvUUw2Bav4RIj/C3HcFh4RIUnF8wgG6JQWCL1//gRx4v+LVWgcIQdGA==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  react-native-image-picker@8.2.1:
+    resolution: {integrity: sha512-FBeGYJGFDjMdGCcyubDJgBAPCQ4L1D3hwLXyUU91jY9ahOZMTbluceVvRmrEKqnDPFJ0gF1NVhJ0nr1nROFLdg==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -8525,6 +8534,11 @@ snapshots:
       '@egjs/hammerjs': 2.0.17
       hoist-non-react-statics: 3.3.2
       invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.73.0(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
+
+  react-native-image-picker@8.2.1(react-native@0.73.0(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
       react: 18.2.0
       react-native: 0.73.0(@babel/core@7.29.0)(@babel/preset-env@7.29.0(@babel/core@7.29.0))(react@18.2.0)
 

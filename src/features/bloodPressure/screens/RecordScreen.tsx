@@ -42,9 +42,9 @@ const RecordScreen = () => {
     return isValid;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (validate()) {
-      addRecord({
+      await addRecord({
         systolic: Number(systolic),
         diastolic: Number(diastolic),
         pulse: Number(pulse),
