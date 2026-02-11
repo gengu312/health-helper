@@ -1,13 +1,10 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, Button, useTheme, FAB, List } from 'react-native-paper';
+import { Text, Card, Button, useTheme, FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useBloodPressureStore } from '../store/bloodPressureStore';
-import { format } from 'date-fns';
 
 const HomeScreen = ({ navigation }: any) => {
   const theme = useTheme();
-  const recentRecords = useBloodPressureStore(state => state.getRecentRecords());
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -28,18 +25,7 @@ const HomeScreen = ({ navigation }: any) => {
         <Text variant="titleMedium" style={styles.sectionTitle}>最近记录</Text>
         <Card style={styles.card}>
           <Card.Content>
-            {recentRecords.length === 0 ? (
-              <Text variant="bodyMedium">暂无记录，请点击下方按钮添加</Text>
-            ) : (
-              recentRecords.map(record => (
-                <List.Item
-                  key={record.id}
-                  title={`${record.systolic}/${record.diastolic} mmHg`}
-                  description={`${format(record.timestamp, 'MM-dd HH:mm')} | 脉搏: ${record.pulse}`}
-                  left={props => <List.Icon {...props} icon="heart-pulse" color={theme.colors.primary} />}
-                />
-              ))
-            )}
+            <Text variant="bodyMedium">暂无记录，请点击下方按钮添加</Text>
           </Card.Content>
         </Card>
       </ScrollView>
@@ -50,7 +36,7 @@ const HomeScreen = ({ navigation }: any) => {
         label="记录"
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         color={theme.colors.onPrimary}
-        onPress={() => navigation.navigate('Record')}
+        onPress={() => console.log('Navigate to Record')}
       />
     </SafeAreaView>
   );

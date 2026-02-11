@@ -2,7 +2,6 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '@/features/bloodPressure/screens/HomeScreen';
-import RecordScreen from '@/features/bloodPressure/screens/RecordScreen';
 import { useTheme } from 'react-native-paper';
 
 export type RootStackParamList = {
@@ -34,11 +33,6 @@ const AppNavigator = () => {
           name="Home" 
           component={HomeScreen} 
           options={{ title: '健康助手' }} 
-        />
-        <Stack.Screen 
-          name="Record" 
-          component={RecordScreen} 
-          options={{ title: '记录数据' }} 
         />
         {/* Add other screens here */}
       </Stack.Navigator>

@@ -35,11 +35,6 @@ const AppNavigator = () => {
           component={HomeScreen} 
           options={{ title: '健康助手' }} 
         />
-        <Stack.Screen 
-          name="Record" 
-          component={RecordScreen} 
-          options={{ title: '记录数据' }} 
-        />
         {/* Add other screens here */}
       </Stack.Navigator>
     </NavigationContainer>
