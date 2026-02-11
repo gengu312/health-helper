@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, useTheme, FAB, List, ActivityIndicator, SegmentedButtons, Surface, Avatar } from 'react-native-paper';
+import { Text, Card, useTheme, FAB, List, ActivityIndicator, SegmentedButtons, Surface, Avatar, IconButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBloodPressureStore } from '../store/bloodPressureStore';
+import { useThemeStore } from '@/store/themeStore';
 import { format, subDays, startOfDay, isAfter } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import BloodPressureChart from '@/components/charts/BloodPressureChart';
 
 const HomeScreen = ({ navigation }: any) => {
   const theme = useTheme();
+  const toggleTheme = useThemeStore(state => state.toggleTheme);
+  const themeMode = useThemeStore(state => state.themeMode);
   const recentRecords = useBloodPressureStore(state => state.getRecentRecords());
   const allRecords = useBloodPressureStore(state => state.records);
   const loadRecords = useBloodPressureStore(state => state.loadRecords);
@@ -46,12 +49,19 @@ const HomeScreen = ({ navigation }: any) => {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Header Section */}
         <View style={styles.header}>
-          <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.onBackground }}>
-            健康助手
-          </Text>
-          <Text variant="bodyMedium" style={{ color: theme.colors.outline }}>
-            {format(new Date(), 'MM月dd日 EEEE', { locale: zhCN })}
-          </Text>
+          <View>
+            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.onBackground }}>
+              健康助手
+            </Text>
+            <Text variant="bodyMedium" style={{ color: theme.colors.outline }}>
+              {format(new Date(), 'MM月dd日 EEEE', { locale: zhCN })}
+            </Text>
+          </View>
+          <IconButton 
+            icon={theme.dark ? "weather-sunny" : "weather-night"} 
+            onPress={toggleTheme}
+            size={28}
+          />
         </View>
 
         {/* Chart Section */}
@@ -191,6 +201,9 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 24,
     marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   chartCard: {
     padding: 16,
@@ -202,12 +215,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+    flexWrap: 'wrap',
+    gap: 8,
   },
   segmentedButton: {
-    transform: [{ scale: 0.9 }],
+    // transform: [{ scale: 0.9 }], // Removed to prevent layout issues
+    minWidth: 160,
   },
   chartContent: {
-    marginLeft: -10, // Offset for chart padding
+    // marginLeft: -10, // Removed to prevent layout issues
   },
   chartPlaceholder: {
     height: 200,

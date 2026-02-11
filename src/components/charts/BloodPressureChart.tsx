@@ -12,10 +12,15 @@ interface Props {
 
 const BloodPressureChart = ({ data, viewMode = 'week' }: Props) => {
   const theme = useTheme();
-  const [layoutWidth, setLayoutWidth] = useState(Dimensions.get('window').width - 32);
+  // Initial width based on HomeScreen layout: Screen - (16*2 Screen Padding) - (16*2 Card Padding) = -64
+  const [layoutWidth, setLayoutWidth] = useState(Dimensions.get('window').width - 64);
 
   const onLayout = (event: LayoutChangeEvent) => {
-    setLayoutWidth(event.nativeEvent.layout.width);
+    const { width } = event.nativeEvent.layout;
+    // Only update if width is valid and significantly different to avoid loops
+    if (width > 0 && Math.abs(width - layoutWidth) > 10) {
+      setLayoutWidth(width);
+    }
   };
   
   if (!data || data.length === 0) return null;
