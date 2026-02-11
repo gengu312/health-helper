@@ -60,14 +60,23 @@ const HomeScreen = ({ navigation }: any) => {
         </Card>
       </ScrollView>
 
-      {/* Quick Action FAB */}
-      <FAB
-        icon="plus"
-        label="记录"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => navigation.navigate('Record')}
-      />
+      {/* Quick Action FABs */}
+      <View style={styles.fabContainer}>
+        <FAB
+          icon="alarm"
+          style={[styles.fab, { backgroundColor: theme.colors.secondary, marginBottom: 16 }]}
+          color={theme.colors.onSecondary}
+          onPress={() => navigation.navigate('Reminder')}
+          small
+        />
+        <FAB
+          icon="plus"
+          label="记录"
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          color={theme.colors.onPrimary}
+          onPress={() => navigation.navigate('Record')}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -94,11 +103,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginLeft: 4,
   },
-  fab: {
+  fabContainer: {
     position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 0,
+    alignItems: 'flex-end',
+  },
+  fab: {
+    // margin handled in container
   },
 });
 
