@@ -1,4 +1,4 @@
-import MlkitOcr, { MlkitOcrResult, MLKTextLine } from 'react-native-mlkit-ocr';
+import MlkitOcr from 'react-native-mlkit-ocr';
 
 export interface OCRResult {
   success: boolean;
@@ -201,12 +201,16 @@ export class OCRService {
       if (simpleCandidates.length >= 3) {
           // 假设排序后的前三个就是 S, D, P (基于 Y 轴排序)
           // 并且满足 S > D
-          const s = simpleCandidates[0];
+          let s = simpleCandidates[0];
           let d = simpleCandidates[1];
-          let p = simpleCandidates[2];
+          const p = simpleCandidates[2];
 
           // 简单的交换逻辑
-          if (d.value > s.value) { const temp = s; s = d; d = temp; } // 确保 S > D
+          if (d.value > s.value) {
+            const temp = s;
+            s = d;
+            d = temp;
+          }
           
           return {
               success: true,

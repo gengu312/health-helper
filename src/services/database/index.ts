@@ -2,7 +2,6 @@ import { Database } from '@nozbe/watermelondb';
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import { schema } from './schema';
 import BloodPressure from './models/BloodPressure';
-import { Platform } from 'react-native';
 
 const adapter = new SQLiteAdapter({
   schema,

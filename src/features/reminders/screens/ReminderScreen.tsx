@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, Card, Switch, Button, IconButton, useTheme, FAB } from 'react-native-paper';
+import { Text, Card, Switch, IconButton, useTheme, FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useReminderStore } from '../store/reminderStore';
 import { format } from 'date-fns';
 
@@ -11,9 +12,9 @@ const ReminderScreen = () => {
   const { reminders, addReminder, toggleReminder, deleteReminder } = useReminderStore();
   
   const [showPicker, setShowPicker] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [selectedTime] = useState(new Date());
 
-  const handleTimeChange = (event: any, date?: Date) => {
+  const handleTimeChange = (_event: DateTimePickerEvent, date?: Date) => {
     setShowPicker(false);
     if (date) {
       addReminder(date, '日常测量');
@@ -38,7 +39,7 @@ const ReminderScreen = () => {
             <Card.Title
               title={format(new Date(item.time), 'HH:mm')}
               subtitle={item.label}
-              right={(props) => (
+              right={(_props) => (
                 <View style={styles.actionContainer}>
                   <Switch
                     value={item.isEnabled}

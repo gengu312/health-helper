@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, useTheme, FAB, List, ActivityIndicator, SegmentedButtons, Surface, Avatar, IconButton } from 'react-native-paper';
+import { Text, useTheme, FAB, List, ActivityIndicator, SegmentedButtons, Surface, Avatar, IconButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBloodPressureStore } from '../store/bloodPressureStore';
 import { useThemeStore } from '@/store/themeStore';
@@ -8,10 +8,15 @@ import { format, subDays, startOfDay, isAfter } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import BloodPressureChart from '@/components/charts/BloodPressureChart';
 
-const HomeScreen = ({ navigation }: any) => {
+type Props = {
+  navigation: {
+    navigate: (screen: string) => void;
+  };
+};
+
+const HomeScreen = ({ navigation }: Props) => {
   const theme = useTheme();
   const toggleTheme = useThemeStore(state => state.toggleTheme);
-  const themeMode = useThemeStore(state => state.themeMode);
   const recentRecords = useBloodPressureStore(state => state.getRecentRecords());
   const allRecords = useBloodPressureStore(state => state.records);
   const loadRecords = useBloodPressureStore(state => state.loadRecords);
@@ -61,6 +66,7 @@ const HomeScreen = ({ navigation }: any) => {
             icon={theme.dark ? "weather-sunny" : "weather-night"} 
             onPress={toggleTheme}
             size={28}
+            accessibilityLabel="切换深浅色模式"
           />
         </View>
 
@@ -75,7 +81,7 @@ const HomeScreen = ({ navigation }: any) => {
             </View>
             <SegmentedButtons
               value={viewMode}
-              onValueChange={value => setViewMode(value as any)}
+              onValueChange={value => setViewMode(value as 'day' | 'week' | 'month')}
               buttons={[
                 { value: 'day', label: '日' },
                 { value: 'week', label: '周' },
@@ -219,11 +225,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   segmentedButton: {
-    // transform: [{ scale: 0.9 }], // Removed to prevent layout issues
     minWidth: 160,
   },
   chartContent: {
-    // marginLeft: -10, // Removed to prevent layout issues
   },
   chartPlaceholder: {
     height: 200,
@@ -277,7 +281,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   fab: {
-    // margin handled in container
   },
 });
 

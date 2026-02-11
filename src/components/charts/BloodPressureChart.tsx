@@ -12,23 +12,20 @@ interface Props {
 
 const BloodPressureChart = ({ data, viewMode = 'week' }: Props) => {
   const theme = useTheme();
-  // Initial width based on HomeScreen layout: Screen - (16*2 Screen Padding) - (16*2 Card Padding) = -64
   const [layoutWidth, setLayoutWidth] = useState(Dimensions.get('window').width - 64);
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
-    // Only update if width is valid and significantly different to avoid loops
     if (width > 0 && Math.abs(width - layoutWidth) > 10) {
       setLayoutWidth(width);
     }
   };
   
-  if (!data || data.length === 0) return null;
-
-  // Transform data and sort by time ascending
   const sortedData = useMemo(() => [...data].sort((a, b) => a.timestamp - b.timestamp), [data]);
   const systolicData = useMemo(() => sortedData.map(r => ({ x: new Date(r.timestamp), y: r.systolic })), [sortedData]);
   const diastolicData = useMemo(() => sortedData.map(r => ({ x: new Date(r.timestamp), y: r.diastolic })), [sortedData]);
+
+  if (!data || data.length === 0) return null;
 
   const getTickFormat = (x: Date) => {
     if (viewMode === 'day') {
@@ -71,11 +68,9 @@ const BloodPressureChart = ({ data, viewMode = 'week' }: Props) => {
             grid: { stroke: 'none' },
             tickLabels: { fill: theme.colors.onSurfaceVariant, fontSize: 10, padding: 5, angle: viewMode === 'day' ? 0 : -45 }
           }}
-          // Reduce number of ticks for cleaner look
           tickCount={viewMode === 'day' ? 6 : 7}
         />
         
-        {/* Systolic Area & Line (Red) */}
         <VictoryGroup data={systolicData}>
           <VictoryArea
             style={{
@@ -93,7 +88,6 @@ const BloodPressureChart = ({ data, viewMode = 'week' }: Props) => {
           />
         </VictoryGroup>
 
-        {/* Diastolic Area & Line (Blue/Primary) */}
         <VictoryGroup data={diastolicData}>
           <VictoryArea
             style={{

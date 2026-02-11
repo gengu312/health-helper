@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { TextInput, Button, HelperText, useTheme, ActivityIndicator, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBloodPressureStore } from '../store/bloodPressureStore';

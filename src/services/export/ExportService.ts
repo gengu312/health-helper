@@ -28,6 +28,16 @@ export class ExportService {
     }
   }
 
+  static async shareImage(imageUri: string) {
+    const url = imageUri.startsWith('file://') ? imageUri : `file://${imageUri}`;
+
+    await Share.open({
+      url,
+      type: 'image/png',
+      title: '分享健康报告',
+    });
+  }
+
   private static generateHTML(records: BloodPressureRecord[]): string {
     const rows = records.map(r => `
       <tr>

@@ -1,36 +1,56 @@
-import React from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Text, Card, Button, useTheme, List, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBloodPressureStore } from '@/features/bloodPressure/store/bloodPressureStore';
 import { ExportService } from '@/services/export/ExportService';
 import BloodPressureChart from '@/components/charts/BloodPressureChart';
+import { captureRef } from 'react-native-view-shot';
+import ShareReportCard, { ShareReportStats } from '../components/ShareReportCard';
 
 const AnalysisScreen = () => {
   const theme = useTheme();
   const records = useBloodPressureStore(state => state.records);
 
-  const calculateStats = () => {
+  const shareCardRef = useRef<React.ElementRef<typeof View>>(null);
+  const [isSharing, setIsSharing] = useState(false);
+
+  const stats: ShareReportStats | null = useMemo(() => {
     if (records.length === 0) return null;
-    
+
     const systolicSum = records.reduce((acc, r) => acc + r.systolic, 0);
     const diastolicSum = records.reduce((acc, r) => acc + r.diastolic, 0);
-    
+
     return {
       avgSystolic: Math.round(systolicSum / records.length),
       avgDiastolic: Math.round(diastolicSum / records.length),
       totalRecords: records.length,
-      highBpCount: records.filter(r => r.systolic >= 140 || r.diastolic >= 90).length
+      highBpCount: records.filter(r => r.systolic >= 140 || r.diastolic >= 90).length,
     };
-  };
+  }, [records]);
 
-  const stats = calculateStats();
-
-  const handleExport = async () => {
+  const handleShareImage = async () => {
     try {
-      await ExportService.generateAndSharePDF(records);
-    } catch (error) {
-      Alert.alert('导出失败', '无法生成或分享报告，请稍后重试。');
+      if (records.length === 0) return;
+      setIsSharing(true);
+
+      await new Promise(resolve => setTimeout(resolve, 80));
+
+      if (!shareCardRef.current) {
+        throw new Error('Share view not ready');
+      }
+
+      const uri = await captureRef(shareCardRef.current, {
+        format: 'png',
+        quality: 1,
+        result: 'tmpfile',
+      });
+
+      await ExportService.shareImage(uri);
+    } catch {
+      Alert.alert('生成失败', '无法生成或分享图片，请稍后重试。');
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -77,15 +97,22 @@ const AnalysisScreen = () => {
           </Card>
         )}
 
-        {/* Export Button */}
+        <View style={styles.hiddenShareRoot} pointerEvents="none">
+          <View ref={shareCardRef} collapsable={false} style={styles.hiddenShareCard}>
+            <ShareReportCard records={records} stats={stats} />
+          </View>
+        </View>
+
         <Button 
           mode="contained" 
-          icon="file-export" 
-          onPress={handleExport} 
+          icon="share-variant" 
+          onPress={handleShareImage} 
           style={styles.button}
-          disabled={records.length === 0}
+          disabled={records.length === 0 || isSharing}
+          loading={isSharing}
+          accessibilityLabel="生成分享图并分享"
         >
-          导出 PDF 报告
+          生成分享图
         </Button>
       </ScrollView>
     </SafeAreaView>
@@ -109,6 +136,14 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     marginBottom: 32,
+  },
+  hiddenShareRoot: {
+    position: 'absolute',
+    left: -10000,
+    top: 0,
+  },
+  hiddenShareCard: {
+    width: 360,
   },
 });
 
