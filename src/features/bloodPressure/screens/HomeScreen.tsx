@@ -4,10 +4,12 @@ import { Text, Card, Button, useTheme, FAB, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBloodPressureStore } from '../store/bloodPressureStore';
 import { format } from 'date-fns';
+import BloodPressureChart from '@/components/charts/BloodPressureChart';
 
 const HomeScreen = ({ navigation }: any) => {
   const theme = useTheme();
   const recentRecords = useBloodPressureStore(state => state.getRecentRecords());
+  const allRecords = useBloodPressureStore(state => state.records);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -16,11 +18,15 @@ const HomeScreen = ({ navigation }: any) => {
         <Card style={styles.card}>
           <Card.Title title="血压趋势 (近7天)" subtitle="收缩压/舒张压" />
           <Card.Content>
-            <View style={styles.chartPlaceholder}>
-              <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                图表区域 (待集成Victory Native XL)
-              </Text>
-            </View>
+            {allRecords.length > 0 ? (
+              <BloodPressureChart data={allRecords} />
+            ) : (
+              <View style={styles.chartPlaceholder}>
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                  暂无数据，请先记录
+                </Text>
+              </View>
+            )}
           </Card.Content>
         </Card>
 
