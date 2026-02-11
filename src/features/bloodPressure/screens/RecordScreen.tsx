@@ -4,7 +4,8 @@ import { TextInput, Button, HelperText, useTheme, ActivityIndicator, Text } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBloodPressureStore } from '../store/bloodPressureStore';
 import { useNavigation } from '@react-navigation/native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
+import DocumentScanner from 'react-native-document-scanner-plugin';
 import { OCRService } from '@/services/ocr/OCRService';
 
 const RecordScreen = () => {
@@ -58,31 +59,65 @@ const RecordScreen = () => {
     }
   };
 
-  const handleOCR = async (fromCamera: boolean) => {
+  const handleScan = async () => {
+    try {
+      const { scannedImages } = await DocumentScanner.scanDocument({
+        maxNumDocuments: 1
+      });
+      
+      if (scannedImages && scannedImages.length > 0) {
+        processImage(scannedImages[0]);
+      }
+    } catch (error) {
+      console.error('Scan Error:', error);
+      Alert.alert('扫描失败', '启动扫描仪失败，请检查相机权限');
+    }
+  };
+
+  const handleGallery = async () => {
     const options = {
       mediaType: 'photo' as const,
       includeBase64: false,
     };
-
-    const result = fromCamera 
-      ? await launchCamera(options) 
-      : await launchImageLibrary(options);
-
+    
+    const result = await launchImageLibrary(options);
     if (result.assets && result.assets[0]?.uri) {
-      setIsRecognizing(true);
-      const ocrResult = await OCRService.recognizeBloodPressure(result.assets[0].uri);
-      setIsRecognizing(false);
-
-      if (ocrResult.success && ocrResult.data) {
-        setSystolic(ocrResult.data.systolic.toString());
-        setDiastolic(ocrResult.data.diastolic.toString());
-        setPulse(ocrResult.data.pulse.toString());
-        setNote('OCR 自动识别数据');
-        Alert.alert('识别成功', '请核对数据是否准确');
-      } else {
-        Alert.alert('识别失败', ocrResult.error || '无法识别图片中的数值');
-      }
+      processImage(result.assets[0].uri);
     }
+  };
+
+  const processImage = async (uri: string) => {
+    setIsRecognizing(true);
+    const ocrResult = await OCRService.recognizeBloodPressure(uri);
+    setIsRecognizing(false);
+
+    if (ocrResult.success && ocrResult.data) {
+      const { systolic, diastolic, pulse } = ocrResult.data;
+      
+      // 检测是否是常见的示例数据 (屏幕保护膜或包装盒)
+      if (systolic === 140 && diastolic === 85 && pulse === 90) {
+        Alert.alert(
+          '检测到示例数据',
+          '识别结果 (140/85/90) 看起来像是血压计屏幕保护膜或包装盒上的示例数值。\n\n请确认您是否已撕掉保护膜，并拍摄真实的测量结果。',
+          [
+            { text: '重新扫描', onPress: handleScan },
+            { text: '强制填入', onPress: () => fillData(systolic, diastolic, pulse) }
+          ]
+        );
+      } else {
+        fillData(systolic, diastolic, pulse);
+        Alert.alert('识别成功', '请核对数据是否准确');
+      }
+    } else {
+      Alert.alert('识别失败', ocrResult.error || '无法识别图片中的数值');
+    }
+  };
+
+  const fillData = (s: number, d: number, p: number) => {
+    setSystolic(s.toString());
+    setDiastolic(d.toString());
+    setPulse(p.toString());
+    setNote('OCR 自动识别数据');
   };
 
   return (
@@ -92,22 +127,22 @@ const RecordScreen = () => {
         {/* OCR Buttons */}
         <View style={styles.ocrContainer}>
           <Button 
-            icon="camera" 
-            mode="outlined" 
-            onPress={() => handleOCR(true)}
-            style={styles.ocrButton}
+            icon="crop-free" 
+            mode="contained" 
+            onPress={handleScan}
+            style={[styles.ocrButton, { flex: 0.55 }]}
             disabled={isRecognizing}
           >
-            拍照识别
+            扫描屏幕
           </Button>
           <Button 
             icon="image" 
             mode="outlined" 
-            onPress={() => handleOCR(false)}
-            style={styles.ocrButton}
+            onPress={handleGallery}
+            style={[styles.ocrButton, { flex: 0.40 }]}
             disabled={isRecognizing}
           >
-            相册导入
+            相册
           </Button>
         </View>
 
